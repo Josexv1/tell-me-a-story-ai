@@ -6,7 +6,10 @@ import { ImagesState, defaultState } from '../screens/Story/types';
 import { TUseStory, TUseStoryReturn } from './types';
 
 const openai = new OpenAI({
-  apiKey: Config.OPENAI_API_KEY,
+  apiKey: Config.OPENAI_API_KEY, "baseURL": "https://openrouter.ai/api/v1", "defaultHeaders": {
+            "HTTP-Referer": YOUR_SITE_URL,
+            "X-Title": YOUR_SITE_NAME // Optional. Shows on openrouter.ai
+          }
 });
 
 export default function useStory({
@@ -37,7 +40,7 @@ export default function useStory({
   const fetchStory = React.useCallback(async () => {
     try {
       const completion = await openai.chat.completions.create({
-        model: 'gpt-3.5-turbo',
+        model: 'openai/gpt-3.5-turbo',
         messages: [{role: 'user', content}],
       });
 
