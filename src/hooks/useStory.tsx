@@ -1,14 +1,13 @@
 import * as React from 'react';
-import {Configuration, OpenAIApi} from 'openai';
+import OpenAI from 'openai';
 import Config from 'react-native-config';
 
-import {ImagesState, defaultState} from '../screens/Story/types';
-import {TUseStory, TUseStoryReturn} from './types';
+import { ImagesState, defaultState } from '../screens/Story/types';
+import { TUseStory, TUseStoryReturn } from './types';
 
-const configuration = new Configuration({
+const openai = new OpenAI({
   apiKey: Config.OPENAI_API_KEY,
 });
-const openai = new OpenAIApi(configuration);
 
 export default function useStory({
   content = '',
@@ -20,7 +19,7 @@ export default function useStory({
 
   const fetchImagesStory = React.useCallback(async () => {
     try {
-      const response = await openai.createImage({
+      const response = await openai.images.generate({
         prompt: `${prompt}, digital art`,
         n: 5,
         size: '256x256',
@@ -37,12 +36,12 @@ export default function useStory({
 
   const fetchStory = React.useCallback(async () => {
     try {
-      const completion = await openai.createChatCompletion({
+      const completion = await openai.chat.completions.create({
         model: 'gpt-3.5-turbo',
         messages: [{role: 'user', content}],
       });
 
-      const _message = completion.data.choices[0].message;
+      const _message = completion.choices[0].message;
 
       setMessage(_message?.content);
     } catch (error) {
